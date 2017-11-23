@@ -7,7 +7,7 @@ var express = require('express')
 
 const KEY = 'ntalk.sid', SECRET = 'ntalk';
 var cookie = express.cookieParser(SECRET)
-	, store = express.session.MemoryStore()
+	, store = new express.session.MemoryStore()
 	, sessOpts = {secret: SECRET, key: KEY, store: store}
 	, session = express.session(sessOpts);
 
