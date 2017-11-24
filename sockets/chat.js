@@ -6,14 +6,26 @@ module.exports = function(io) {
 
 		var session = client.handshake.session
 			, usuario = session.usuario;
+		client.set('email', usuario.email);
+
+		var onlines = sockets.clients();
+		onlines.forEach(function(online) {
+			var online = sockets.sockets[online.id];
+			online.get('email', function(err, email) {
+				client.emit('notify-onlines', email);
+				client.broadcast.emit('notify-onlines', email);
+			});
+		});
+
 		client.on('send-server', function (msg) {
-			msg = "<b>"+usuario.nome+":</b> "+msg+"<br>";
+			var msg = "<b>"+usuario.nome+":</b> "+msg+"<br>";
 			client.get('sala', function(erro, sala) {
 				var data = {email: usuario.email, sala: sala};
 				client.broadcast.emit('new-message', data);
 				sockets.in(sala).emit('send-client', msg);
 			});			
 		});
+
 		client.on('join', function (sala) {
 			if (sala) {
 				sala = sala.replace('?', '');
@@ -25,8 +37,12 @@ module.exports = function(io) {
 			client.set('sala', sala);
 			client.join(sala);
 		});
+
 		client.on('disconnect', function () {
 			client.get('sala', function(erro, sala) {
+				var msg = "<b>"+usuario.nome+":</b> saiu<br>";
+				client.broadcast.emit('notify-offline', usuario.email);
+				sockets.in(sala).emit('send-client', msg);
 				client.leave(sala);
 			});
 		});
