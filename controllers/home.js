@@ -7,19 +7,19 @@ module.exports = function(app) {
 		},
 		login: function(req, res) {
 			var query = {email: req.body.usuario.email};
-			Usuario.findOne(quey)
+			Usuario.findOne(query)
 				.select('nome email')
 				.exec(function(erro, usuario) {
 					if (usuario) {
 						req.session.usuario = usuario;
-						req.redirect('/contatos');
+						res.redirect('/contatos');
 					} else {
 						Usuario.create(req.body.usuario, function(erro, usuario) {
 							if (erro) {
 								res.redirect('/');
 							} else {
 								req.session.usuario = usuario;
-								req.redirect('/contatos');
+								res.redirect('/contatos');
 							}
 						});
 					}

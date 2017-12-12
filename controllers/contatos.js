@@ -1,5 +1,7 @@
 module.exports = function(app) {
 
+	var Usuario = app.models.usuario;
+
 	var ContatoController = {
 		index: function(req, res) {
 			var _id = req.session.usuario._id;
