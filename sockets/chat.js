@@ -1,10 +1,9 @@
 module.exports = function(io) {
 	var crypto = require('crypto')
 		,redis = require('redis').createClient()
-		,md5 = crypto.createHash('md5')
 		,sockets = io.sockets;
-	sockets.on('connection', function (client) {
 
+	sockets.on('connection', function (client) {
 		var session = client.handshake.session
 			, usuario = session.usuario;
 		client.set('email', usuario.email);
